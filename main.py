@@ -25,4 +25,6 @@ system.update_bodies()
 for body in system.contents:
     ax.plot(body.pos, 'o')
 
+fig.show()
+
 done = input("done")

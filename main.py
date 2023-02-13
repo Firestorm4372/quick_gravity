@@ -1,6 +1,9 @@
 import numpy as np
+import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
+
+matplotlib.use("TkAgg")
 
 import classes
 
@@ -18,19 +21,24 @@ ax = fig.add_subplot(autoscale_on=False, xlim=(-system.size[0], system.size[0]),
 ax.set_aspect('equal')
 ax.grid()
 
-point, = ax.plot([],[], 'o')
+points = []
+for i in system.contents:
+    point, = ax.plot([],[],'x')
+    points.append(point)
 
 def animate(i):
-    for body in system.contents:
-        point.set_data(body.positions[i][0], body.positions[i][1])
+    for idx, body in enumerate(system.contents):
+        points[idx].set_data(body.positions[i][0], body.positions[i][1])
     
-    return point
+    return points
 
 ani = animation.FuncAnimation(
-    fig, animate, iterations, interval=0.001, blit=True)
+    fig, animate, iterations, interval=0.1, blit=True)
 
 plt.show()
 
 # for body in system.contents:
 #     body.positions = np.array(body.positions)
 #     ax.plot(body.positions[:,0], body.positions[:,1], 'o')
+
+# plt.show()

@@ -9,8 +9,8 @@ class Solar_System:
                 ) -> None:
         self.contents = []
         self.size = size
-        self.G = 1.0
-        self.dt = 0.001
+        self.G = 100.0
+        self.dt = 0.1
 
     def add_body(self,
                  mass = 1,
@@ -28,13 +28,13 @@ class Solar_System:
         for i, body1 in enumerate(self.contents):
             for j, body2 in enumerate(self.contents[i+1:]):
                 R = body2.pos - body1.pos
-                F = self.G * body1.mass * body2.mass / (np.linalg.norm(R)**2)
-                # F_vec points from 1 to 2
-                F_vec = F * (R / np.linalg.norm(R))
+                F_abs = self.G * body1.mass * body2.mass / (np.linalg.norm(R)**2)
+                # F points from 1 to 2
+                F = F_abs * (R / np.linalg.norm(R))
 
                 # Sum in the accelerations
-                body1.acc += F / body1.mass
-                body2.acc += -F / body2.mass
+                body1.acc = body1.acc + (F / body1.mass)
+                body2.acc = body2.acc - (F / body2.mass)
 
         for body in self.contents:
             body.update_position(self.dt)
@@ -52,8 +52,10 @@ class Body:
         self.pos = np.array(pos, 'float64')
         self.vel = np.array(vel, 'float64')
         self.acc = np.zeros(2, 'float64')
+        self.positions = [self.pos]
     
     def update_position(self, dt):
-        self.vel += self.acc * dt
-        self.pos += self.vel * dt
+        self.vel = self.vel + (self.acc * dt)
+        self.pos = self.pos + (self.vel * dt)
+        self.positions.append(self.pos)
     

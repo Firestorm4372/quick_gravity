@@ -1,30 +1,36 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.animation as animation
 
 import classes
 
 system = classes.Solar_System()
-system.add_body(pos=(-8,0))
-system.add_body(pos=(8,0))
+system.add_body(pos=(-8,0), vel=(0.1,1.5))
+system.add_body(pos=(8,0), vel=(0,-1.5))
 
-for body in system.contents:
-    print(body.pos)
+iterations = 1000
+
+for i in range(iterations):
+    system.update_bodies()
 
 fig = plt.figure(figsize=(5,4))
 ax = fig.add_subplot(autoscale_on=False, xlim=(-system.size[0], system.size[0]), ylim=(-system.size[1], system.size[1]))
 ax.set_aspect('equal')
 ax.grid()
 
-for body in system.contents:
-    ax.plot(body.pos, 'o')
+point, = ax.plot([],[], 'o')
 
-fig.show()
+def animate(i):
+    for body in system.contents:
+        point.set_data(body.positions[i][0], body.positions[i][1])
+    
+    return point
 
-system.update_bodies()
+ani = animation.FuncAnimation(
+    fig, animate, iterations, interval=0.001, blit=True)
 
-for body in system.contents:
-    ax.plot(body.pos, 'o')
+plt.show()
 
-fig.show()
-
-done = input("done")
+# for body in system.contents:
+#     body.positions = np.array(body.positions)
+#     ax.plot(body.positions[:,0], body.positions[:,1], 'o')
